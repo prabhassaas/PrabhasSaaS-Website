@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free Tools · Prabhas SaaS</title>
+<meta name="description" content="Free GST, finance and everyday calculators for Indian business — GST calculator, EMI, GSTIN validator, margin, interest and more. No login needed.">
+<link rel="icon" href="../images/favicon-32.png">
+<style>
+:root{--maroon:#7A1F2B;--saffron:#F2A024;--ink:#1f2430;--muted:#6b7280;--rule:#e7ddd9;--bg:#f6f1ee;--fd:'Montserrat',system-ui,sans-serif;--fb:'Inter',system-ui,sans-serif;--fm:'JetBrains Mono',ui-monospace,monospace}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--fb);color:var(--ink);background:var(--bg);line-height:1.5}
+a{color:var(--maroon)}
+.wrap{max-width:760px;margin:0 auto;padding:0 18px}
+header.top{background:var(--maroon);color:#fff;padding:16px 0}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px}
+header.top a{color:#fff;text-decoration:none;font-size:.86rem;opacity:.9}
+.brand{font-family:var(--fd);font-weight:800;font-size:1.05rem;letter-spacing:.01em}
+h1{font-family:var(--fd);font-size:1.5rem;margin:22px 0 4px}
+.sub{color:var(--muted);font-size:.92rem;margin:0 0 16px}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 20px}
+.tab{background:#fff;border:1px solid var(--rule);border-radius:999px;padding:7px 14px;font-size:.84rem;font-weight:600;color:var(--maroon);cursor:pointer;font-family:inherit}
+.tab.on{background:var(--maroon);color:#fff;border-color:var(--maroon)}
+.panel{display:none;background:#fff;border:1px solid var(--rule);border-radius:16px;padding:22px;box-shadow:0 6px 20px rgba(0,0,0,.04)}
+.panel.on{display:block}
+.panel h2{font-family:var(--fd);font-size:1.16rem;margin:0 0 4px}
+.panel .desc{color:var(--muted);font-size:.88rem;margin:0 0 16px}
+label{display:block;font-size:.8rem;font-weight:600;color:var(--ink);margin:0 0 5px}
+.row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.fld{flex:1;min-width:140px}
+input,select{width:100%;padding:10px 12px;border:1px solid var(--rule);border-radius:10px;font-size:.95rem;font-family:inherit;background:#fff}
+input:focus,select:focus{outline:2px solid var(--saffron);outline-offset:0;border-color:var(--saffron)}
+.seg{display:inline-flex;background:#f1ebe8;border-radius:10px;padding:3px;gap:3px;margin-bottom:14px}
+.seg button{border:0;background:transparent;padding:7px 14px;border-radius:8px;font-weight:600;font-size:.84rem;cursor:pointer;color:var(--maroon);font-family:inherit}
+.seg button.on{background:var(--maroon);color:#fff}
+.out{margin-top:6px;background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:16px}
+.out .big{font-family:var(--fd);font-size:1.7rem;font-weight:800;color:var(--maroon)}
+.out .line{display:flex;justify-content:space-between;font-size:.9rem;padding:4px 0;border-top:1px dashed var(--rule)}
+.out .line:first-of-type{border-top:0}
+.out .line span:last-child{font-family:var(--fm);font-weight:600}
+.note{font-size:.78rem;color:var(--muted);margin-top:10px}
+.ok{color:#0E7C5A;font-weight:700}.bad{color:#9A1C1C;font-weight:700}
+.mono{font-family:var(--fm)}
+footer{text-align:center;color:var(--muted);font-size:.8rem;padding:26px 0 40px}
+@media(max-width:560px){.out .big{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><span class="brand">Prabhas SaaS · Free Tools</span><a href="../tools/">← All tools</a></div></header>
+<div class="wrap">
+  <h1 id="tTitle">Free Tools</h1>
+  <p class="sub">Handy calculators for Indian business — no login, nothing stored.</p>
+  <div class="tabs" id="tabs"></div>
+
+  <!-- GST -->
+  <section class="panel" data-slug="gst">
+    <h2>GST Calculator</h2><p class="desc">Add or remove GST and see the CGST / SGST / IGST split.</p>
+    <div class="seg" id="gstSeg"><button class="on" data-m="add">Add GST</button><button data-m="remove">Remove GST</button></div>
+    <div class="row"><div class="fld"><label id="gstAmtL">Amount (excl. GST)</label><input id="gstAmt" type="number" inputmode="decimal" placeholder="10000"></div>
+      <div class="fld"><label>GST rate</label><select id="gstRate"><option>0</option><option>3</option><option>5</option><option>12</option><option selected>18</option><option>28</option></select></div>
+      <div class="fld"><label>Supply</label><select id="gstSupply"><option value="intra">Intra-state (CGST+SGST)</option><option value="inter">Inter-state (IGST)</option></select></div></div>
+    <div class="out" id="gstOut"></div>
+  </section>
+
+  <!-- Reverse GST -->
+  <section class="panel" data-slug="reverse-gst">
+    <h2>Reverse GST Calculator</h2><p class="desc">Find the GST already included inside a gross amount.</p>
+    <div class="row"><div class="fld"><label>Gross amount (incl. GST)</label><input id="rgAmt" type="number" inputmode="decimal" placeholder="11800"></div>
+      <div class="fld"><label>GST rate</label><select id="rgRate"><option>3</option><option>5</option><option>12</option><option selected>18</option><option>28</option></select></div></div>
+    <div class="out" id="rgOut"></div>
+  </section>
+
+  <!-- GSTIN Validator -->
+  <section class="panel" data-slug="gstin">
+    <h2>GSTIN Validator</h2><p class="desc">Checks the 15-character format, checksum digit and state code.</p>
+    <div class="row"><div class="fld"><label>GSTIN</label><input id="ginVal" maxlength="15" style="text-transform:uppercase;font-family:var(--fm)" placeholder="33ABCDE1234F1Z5"></div></div>
+    <div class="out" id="ginOut"></div>
+  </section>
+
+  <!-- EMI -->
+  <section class="panel" data-slug="emi">
+    <h2>EMI Calculator</h2><p class="desc">Monthly instalment, total interest and total payable.</p>
+    <div class="row"><div class="fld"><label>Loan amount (₹)</label><input id="emiP" type="number" inputmode="decimal" placeholder="500000"></div>
+      <div class="fld"><label>Interest rate (% p.a.)</label><input id="emiR" type="number" inputmode="decimal" placeholder="10.5"></div>
+      <div class="fld"><label>Tenure (months)</label><input id="emiN" type="number" inputmode="numeric" placeholder="36"></div></div>
+    <div class="out" id="emiOut"></div>
+  </section>
+
+  <!-- Percentage -->
+  <section class="panel" data-slug="percentage">
+    <h2>Percentage Calculator</h2><p class="desc">Three common percentage questions in one place.</p>
+    <div class="seg" id="pcSeg"><button class="on" data-m="of">X% of Y</button><button data-m="isp">X is what % of Y</button><button data-m="chg">% change</button></div>
+    <div class="row" id="pcRow"></div>
+    <div class="out" id="pcOut"></div>
+  </section>
+
+  <!-- Discount -->
+  <section class="panel" data-slug="discount">
+    <h2>Discount Calculator</h2><p class="desc">Final price after a discount, and what you save.</p>
+    <div class="row"><div class="fld"><label>MRP / list price (₹)</label><input id="dcMrp" type="number" inputmode="decimal" placeholder="2499"></div>
+      <div class="fld"><label>Discount (%)</label><input id="dcPct" type="number" inputmode="decimal" placeholder="20"></div></div>
+    <div class="out" id="dcOut"></div>
+  </section>
+
+  <!-- Margin & Markup -->
+  <section class="panel" data-slug="margin">
+    <h2>Margin &amp; Markup Calculator</h2><p class="desc">Turn cost into selling price and see your profit.</p>
+    <div class="row"><div class="fld"><label>Cost price (₹)</label><input id="mgCost" type="number" inputmode="decimal" placeholder="800"></div>
+      <div class="fld"><label>Selling price (₹)</label><input id="mgSell" type="number" inputmode="decimal" placeholder="1000"></div></div>
+    <div class="out" id="mgOut"></div>
+  </section>
+
+  <!-- Compound Interest -->
+  <section class="panel" data-slug="compound-interest">
+    <h2>Compound Interest</h2><p class="desc">Maturity value with compounding, and interest earned.</p>
+    <div class="row"><div class="fld"><label>Principal (₹)</label><input id="ciP" type="number" inputmode="decimal" placeholder="100000"></div>
+      <div class="fld"><label>Rate (% p.a.)</label><input id="ciR" type="number" inputmode="decimal" placeholder="8"></div></div>
+    <div class="row"><div class="fld"><label>Years</label><input id="ciY" type="number" inputmode="decimal" placeholder="5"></div>
+      <div class="fld"><label>Compounding</label><select id="ciN"><option value="1">Yearly</option><option value="2">Half-yearly</option><option value="4" selected>Quarterly</option><option value="12">Monthly</option></select></div></div>
+    <div class="out" id="ciOut"></div>
+  </section>
+
+  <!-- Age -->
+  <section class="panel" data-slug="age">
+    <h2>Age Calculator</h2><p class="desc">Exact age in years, months and days.</p>
+    <div class="row"><div class="fld"><label>Date of birth</label><input id="ageDob" type="date"></div>
+      <div class="fld"><label>As on</label><input id="ageOn" type="date"></div></div>
+    <div class="out" id="ageOut"></div>
+  </section>
+
+  <!-- Date Difference -->
+  <section class="panel" data-slug="date-diff">
+    <h2>Date Difference</h2><p class="desc">Days, weeks and months between two dates.</p>
+    <div class="row"><div class="fld"><label>From</label><input id="ddFrom" type="date"></div>
+      <div class="fld"><label>To</label><input id="ddTo" type="date"></div></div>
+    <div class="out" id="ddOut"></div>
+  </section>
+</div>
+<footer>Free with every Prabhas SaaS plan · nothing you type here leaves your device.</footer>
+<script>
+var $=function(id){return document.getElementById(id);};
+var INR=function(n){return "\u20b9"+(Math.round((+n||0)*100)/100).toLocaleString("en-IN",{maximumFractionDigits:2});};
+var line=function(l,v){return '<div class="line"><span>'+l+'</span><span>'+v+'</span></div>';};
+
+/* tabs + routing */
+var TOOLS=[["gst","GST Calculator"],["reverse-gst","Reverse GST"],["gstin","GSTIN Validator"],["emi","EMI"],["percentage","Percentage"],["discount","Discount"],["margin","Margin & Markup"],["compound-interest","Compound Interest"],["age","Age"],["date-diff","Date Difference"]];
+var tabs=$("tabs");
+TOOLS.forEach(function(t){var b=document.createElement("button");b.className="tab";b.textContent=t[1];b.dataset.slug=t[0];b.onclick=function(){show(t[0]);};tabs.appendChild(b);});
+function show(slug){
+  var found=false;
+  document.querySelectorAll(".panel").forEach(function(p){var on=p.dataset.slug===slug;p.classList.toggle("on",on);if(on)found=true;});
+  document.querySelectorAll(".tab").forEach(function(b){b.classList.toggle("on",b.dataset.slug===slug);});
+  if(!found){show("gst");return;}
+  var nm=(TOOLS.filter(function(t){return t[0]===slug;})[0]||["",""])[1];
+  $("tTitle").textContent=nm+" \u2014 Free Tool";
+  if(location.hash.slice(1)!==slug){history.replaceState(null,"","#"+slug);}
+}
+
+/* GST */
+var gstMode="add";
+$("gstSeg").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;gstMode=b.dataset.m;$("gstSeg").querySelectorAll("button").forEach(function(x){x.classList.toggle("on",x===b);});$("gstAmtL").textContent=gstMode==="add"?"Amount (excl. GST)":"Amount (incl. GST)";gstCalc();});
+function gstCalc(){
+  var amt=+$("gstAmt").value||0,r=+$("gstRate").value||0,inter=$("gstSupply").value==="inter";
+  var base,tax,total;
+  if(gstMode==="add"){base=amt;tax=amt*r/100;total=amt+tax;}
+  else{base=amt/(1+r/100);tax=amt-base;total=amt;}
+  var h=line("Taxable value",INR(base));
+  if(inter)h+=line("IGST @ "+r+"%",INR(tax));
+  else{h+=line("CGST @ "+(r/2)+"%",INR(tax/2));h+=line("SGST @ "+(r/2)+"%",INR(tax/2));}
+  $("gstOut").innerHTML='<div class="big">'+INR(total)+'</div>'+h+line("Total tax",INR(tax));
+}
+["gstAmt","gstRate","gstSupply"].forEach(function(id){$(id).addEventListener("input",gstCalc);});
+
+/* Reverse GST */
+function rgCalc(){var g=+$("rgAmt").value||0,r=+$("rgRate").value||0,base=g/(1+r/100),tax=g-base;
+  $("rgOut").innerHTML='<div class="big">'+INR(tax)+' GST</div>'+line("Gross amount",INR(g))+line("Taxable value",INR(base))+line("GST @ "+r+"%",INR(tax));}
+["rgAmt","rgRate"].forEach(function(id){$(id).addEventListener("input",rgCalc);});
+
+/* GSTIN */
+function ginCalc(){
+  var g=($("ginVal").value||"").toUpperCase().trim();$("ginVal").value=g;
+  if(g.length<15){$("ginOut").innerHTML='<span class="note">Enter all 15 characters\u2026</span>';return;}
+  var re=/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+  var states={"01":"Jammu & Kashmir","02":"Himachal Pradesh","03":"Punjab","04":"Chandigarh","05":"Uttarakhand","06":"Haryana","07":"Delhi","08":"Rajasthan","09":"Uttar Pradesh","10":"Bihar","11":"Sikkim","12":"Arunachal Pradesh","13":"Nagaland","14":"Manipur","15":"Mizoram","16":"Tripura","17":"Meghalaya","18":"Assam","19":"West Bengal","20":"Jharkhand","21":"Odisha","22":"Chhattisgarh","23":"Madhya Pradesh","24":"Gujarat","27":"Maharashtra","29":"Karnataka","30":"Goa","32":"Kerala","33":"Tamil Nadu","34":"Puducherry","36":"Telangana","37":"Andhra Pradesh"};
+  var ok=re.test(g), chk=gstinChecksum(g.slice(0,14)), cok=chk===g[14], st=states[g.slice(0,2)]||"Unknown";
+  var valid=ok&&cok&&states[g.slice(0,2)];
+  $("ginOut").innerHTML='<div class="big '+(valid?"ok":"bad")+'">'+(valid?"\u2713 Looks valid":"\u2717 Invalid")+'</div>'+
+    line("Format",ok?'<span class="ok">OK</span>':'<span class="bad">wrong</span>')+
+    line("Checksum digit",cok?'<span class="ok">OK ('+chk+')</span>':'<span class="bad">should be '+chk+'</span>')+
+    line("State ("+g.slice(0,2)+")",st)+line("PAN",g.slice(2,12));
+}
+function gstinChecksum(s){var code="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ",f=0;for(var i=0;i<s.length;i++){var c=code.indexOf(s[i]);if(c<0)return"?";var p=c*((i%2)?2:1);f+=Math.floor(p/36)+(p%36);}var d=(36-(f%36))%36;return code[d];}
+$("ginVal").addEventListener("input",ginCalc);
+
+/* EMI */
+function emiCalc(){var P=+$("emiP").value||0,r=(+$("emiR").value||0)/1200,n=+$("emiN").value||0;
+  if(!P||!n){$("emiOut").innerHTML='<span class="note">Enter amount, rate and tenure.</span>';return;}
+  var e=r?P*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1):P/n,tot=e*n,intr=tot-P;
+  $("emiOut").innerHTML='<div class="big">'+INR(e)+' / month</div>'+line("Principal",INR(P))+line("Total interest",INR(intr))+line("Total payable",INR(tot));}
+["emiP","emiR","emiN"].forEach(function(id){$(id).addEventListener("input",emiCalc);});
+
+/* Percentage */
+var pcMode="of";
+var pcRows={of:[["pcA","X (percent)","20"],["pcB","of Y","1500"]],isp:[["pcA","X","300"],["pcB","of Y","1500"]],chg:[["pcA","From","1200"],["pcB","To","1500"]]};
+function pcRender(){var r=pcRows[pcMode];$("pcRow").innerHTML=r.map(function(f){return '<div class="fld"><label>'+f[1]+'</label><input id="'+f[0]+'" type="number" inputmode="decimal" placeholder="'+f[2]+'"></div>';}).join("");["pcA","pcB"].forEach(function(id){$(id).addEventListener("input",pcCalc);});pcCalc();}
+function pcCalc(){var a=+$("pcA").value||0,b=+$("pcB").value||0,out;
+  if(pcMode==="of")out='<div class="big">'+(a*b/100).toLocaleString("en-IN")+'</div>'+line(a+"% of "+b,(a*b/100).toLocaleString("en-IN"));
+  else if(pcMode==="isp"){var p=b?a/b*100:0;out='<div class="big">'+p.toFixed(2)+'%</div>'+line(a+" is this % of "+b,p.toFixed(2)+"%");}
+  else{var c=a?(b-a)/a*100:0;out='<div class="big '+(c>=0?"ok":"bad")+'">'+(c>=0?"+":"")+c.toFixed(2)+'%</div>'+line("Change "+a+" \u2192 "+b,(c>=0?"+":"")+c.toFixed(2)+"%");}
+  $("pcOut").innerHTML=out;}
+$("pcSeg").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;pcMode=b.dataset.m;$("pcSeg").querySelectorAll("button").forEach(function(x){x.classList.toggle("on",x===b);});pcRender();});
+
+/* Discount */
+function dcCalc(){var m=+$("dcMrp").value||0,p=+$("dcPct").value||0,save=m*p/100,fin=m-save;
+  $("dcOut").innerHTML='<div class="big">'+INR(fin)+'</div>'+line("You save",INR(save))+line("Discount",p+"%");}
+["dcMrp","dcPct"].forEach(function(id){$(id).addEventListener("input",dcCalc);});
+
+/* Margin & Markup */
+function mgCalc(){var c=+$("mgCost").value||0,s=+$("mgSell").value||0;
+  if(!c||!s){$("mgOut").innerHTML='<span class="note">Enter cost and selling price.</span>';return;}
+  var profit=s-c,margin=s?profit/s*100:0,markup=c?profit/c*100:0;
+  $("mgOut").innerHTML='<div class="big '+(profit>=0?"ok":"bad")+'">'+INR(profit)+' profit</div>'+line("Margin (on price)",margin.toFixed(2)+"%")+line("Markup (on cost)",markup.toFixed(2)+"%");}
+["mgCost","mgSell"].forEach(function(id){$(id).addEventListener("input",mgCalc);});
+
+/* Compound Interest */
+function ciCalc(){var P=+$("ciP").value||0,r=(+$("ciR").value||0)/100,y=+$("ciY").value||0,n=+$("ciN").value||1;
+  if(!P||!y){$("ciOut").innerHTML='<span class="note">Enter principal, rate and years.</span>';return;}
+  var A=P*Math.pow(1+r/n,n*y),intr=A-P;
+  $("ciOut").innerHTML='<div class="big">'+INR(A)+'</div>'+line("Principal",INR(P))+line("Interest earned",INR(intr))+line("Maturity value",INR(A));}
+["ciP","ciR","ciY","ciN"].forEach(function(id){$(id).addEventListener("input",ciCalc);});
+
+/* Age */
+function diffYMD(a,b){var y=b.getFullYear()-a.getFullYear(),m=b.getMonth()-a.getMonth(),d=b.getDate()-a.getDate();
+  if(d<0){m--;d+=new Date(b.getFullYear(),b.getMonth(),0).getDate();}if(m<0){y--;m+=12;}return [y,m,d];}
+function ageCalc(){var dob=$("ageDob").value,on=$("ageOn").value;if(!dob){$("ageOut").innerHTML='<span class="note">Pick a date of birth.</span>';return;}
+  var a=new Date(dob),b=on?new Date(on):new Date();if(b<a){$("ageOut").innerHTML='<span class="bad">"As on" is before birth date.</span>';return;}
+  var r=diffYMD(a,b),days=Math.round((b-a)/86400000);
+  $("ageOut").innerHTML='<div class="big">'+r[0]+' yr '+r[1]+' mo '+r[2]+' d</div>'+line("Total days",days.toLocaleString("en-IN"))+line("Total weeks",Math.floor(days/7).toLocaleString("en-IN"));}
+["ageDob","ageOn"].forEach(function(id){$(id).addEventListener("input",ageCalc);});
+
+/* Date difference */
+function ddCalc(){var f=$("ddFrom").value,t=$("ddTo").value;if(!f||!t){$("ddOut").innerHTML='<span class="note">Pick both dates.</span>';return;}
+  var a=new Date(f),b=new Date(t),sign=b<a?-1:1;if(b<a){var x=a;a=b;b=x;}
+  var days=Math.round((b-a)/86400000),r=diffYMD(a,b);
+  $("ddOut").innerHTML='<div class="big">'+(sign<0?"-":"")+days.toLocaleString("en-IN")+' days</div>'+line("Weeks",(days/7).toFixed(1))+line("Months (approx)",(r[0]*12+r[1])+" mo "+r[2]+" d")+line("Calendar",r[0]+" yr "+r[1]+" mo "+r[2]+" d");}
+["ddFrom","ddTo"].forEach(function(id){$(id).addEventListener("input",ddCalc);});
+
+/* init */
+(function(){
+  var t=new Date().toISOString().slice(0,10);$("ageOn").value=t;$("ddTo").value=t;
+  gstCalc();rgCalc();emiCalc();pcRender();dcCalc();mgCalc();ciCalc();
+  var slug=(location.hash.slice(1)||"gst");show(slug);
+  window.addEventListener("hashchange",function(){show(location.hash.slice(1)||"gst");});
+})();
+</script>
+</body>
+</html>
