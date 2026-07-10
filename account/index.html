@@ -502,10 +502,7 @@ function esc(x){return (x||'').replace(/[&<>"]/g,function(m){return {'&':'&amp;'
 function pill(a){if(a.status!=='live')return '<span class="pill soon">SOON</span>';return a.entitled?'<span class="pill live">ACTIVE</span>':'<span class="pill locked">LOCKED</span>';}
 function btn(a){
  if(a.status!=='live')return '<span class="btn btn-ghost disabled">Coming soon</span>';
- if(a.entitled){
-  if(a.id==='lekhya')return '<a class="btn btn-primary" href="#" data-sso-app="lekhya">Enter the App →</a>';
-  return '<a class="btn btn-primary" href="'+a.open_url+'">Enter the App →</a>';
- }
+ if(a.entitled)return '<a class="btn btn-primary" href="'+esc(a.open_url)+'" data-sso-app="'+esc(a.id)+'">Enter the App →</a>';
  return '<a class="btn btn-primary" href="/pricing/?app='+a.id+'">Subscribe to unlock</a>';
 }
 function appCard(a){
@@ -620,6 +617,11 @@ document.addEventListener('click',async function(e){
   if(!out.ok){throw new Error(out.error||'sso_failed');}
   location.href=out.url;
  }catch(err){
+  // No SSO bridge deployed yet for this app (or it errored) — fall back to
+  // opening it directly, exactly like before SSO existed. Not an error state:
+  // most apps won't have a matching sso-<id> function until one is built.
+  var fallback=btn.getAttribute('href');
+  if(fallback&&fallback!=='#'){location.href=fallback;return;}
   btn.textContent=orig;
   alert('Could not open '+app+' right now. Please try again in a moment.');
  }
