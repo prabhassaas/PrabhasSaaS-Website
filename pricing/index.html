@@ -763,7 +763,7 @@ a.tcard.live:hover{border-color:#7A1F2B;box-shadow:0 8px 24px rgba(13,20,40,.08)
   stroke-linejoin="round"
 >
   <path d="M20 6 9 17l-5-5" />
-</svg><span>Tally import &amp; PDF export</span></li></ul><a class="btn btn-ghost" href="https://lekhya.prabhassaas.in/register?plan=erp-lite" target="_blank" rel="noopener">Start free trial</a></div><div class="plan best"><span class="tag-best">Most popular</span><span class="pn">ERP Pro</span><div class="price">&#8377;1,299<span style="font-size:14px;font-weight:600;color:var(--muted)">/mo</span></div><div class="cap">or &#8377;12,990/yr &middot; +GST</div><ul><li><svg
+</svg><span>Tally import &amp; PDF export</span></li></ul><button class="btn btn-ghost" type="button" data-buy-app="lekhya" data-buy-plan="erp-lite" data-buy-cycle="monthly">Start free trial</button></div><div class="plan best"><span class="tag-best">Most popular</span><span class="pn">ERP Pro</span><div class="price">&#8377;1,299<span style="font-size:14px;font-weight:600;color:var(--muted)">/mo</span></div><div class="cap">or &#8377;12,990/yr &middot; +GST</div><ul><li><svg
  
   xmlns="http://www.w3.org/2000/svg"
  
@@ -828,7 +828,7 @@ a.tcard.live:hover{border-color:#7A1F2B;box-shadow:0 8px 24px rgba(13,20,40,.08)
   stroke-linejoin="round"
 >
   <path d="M20 6 9 17l-5-5" />
-</svg><span>GST e-filing (GSTR-1 &amp; 3B), e-Invoice &amp; e-Way Bill</span></li></ul><a class="btn btn-primary" href="https://lekhya.prabhassaas.in/register?plan=erp-pro" target="_blank" rel="noopener" style="background:#1b2a4a">Start free trial</a></div><div class="plan"><span class="pn">ERP Lifetime</span><div class="price">&#8377;24,999</div><div class="cap">one-time &middot; +GST</div><ul><li><svg
+</svg><span>GST e-filing (GSTR-1 &amp; 3B), e-Invoice &amp; e-Way Bill</span></li></ul><button class="btn btn-primary" type="button" data-buy-app="lekhya" data-buy-plan="erp-pro" data-buy-cycle="monthly" style="background:#1b2a4a">Start free trial</button></div><div class="plan"><span class="pn">ERP Lifetime</span><div class="price">&#8377;24,999</div><div class="cap">one-time &middot; +GST</div><ul><li><svg
  
   xmlns="http://www.w3.org/2000/svg"
  
@@ -880,7 +880,7 @@ a.tcard.live:hover{border-color:#7A1F2B;box-shadow:0 8px 24px rgba(13,20,40,.08)
   stroke-linejoin="round"
 >
   <path d="M20 6 9 17l-5-5" />
-</svg><span>Priority support, forever</span></li></ul><a class="btn btn-ghost" href="https://lekhya.prabhassaas.in/register?plan=erp-lifetime" target="_blank" rel="noopener">Buy lifetime access</a></div></div><div class="note reveal" style="--accent:#1b2a4a"><svg
+</svg><span>Priority support, forever</span></li></ul><button class="btn btn-ghost" type="button" data-buy-app="lekhya" data-buy-plan="erp-lifetime" data-buy-cycle="lifetime">Buy lifetime access</button></div></div><div class="note reveal" style="--accent:#1b2a4a"><svg
  
   xmlns="http://www.w3.org/2000/svg"
  
@@ -1032,5 +1032,82 @@ window.addEventListener('load',function(){
   el.classList.add('plan-focus');
   setTimeout(function(){el.classList.remove('plan-focus');},2200);
  },50);
+});
+})();</script><script src="https://checkout.razorpay.com/v1/checkout.js"></script><script>(function(){
+var buyBtns=document.querySelectorAll('[data-buy-app]');
+if(!buyBtns.length||!window.supabase)return;
+var sb=window.supabase.createClient("https://ezgfvvqwokxvqmheijmd.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6Z2Z2dnF3b2t4dnFtaGVpam1kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjY1MTIsImV4cCI6MjA5NjkwMjUxMn0.VwmCIsDqIbLzWmmgXqkIiIO5z27fAUitiWhYT7L1pkI");
+var FN="https://ezgfvvqwokxvqmheijmd.supabase.co/functions/v1";
+
+function setBusy(btn,busy,label){
+ btn.disabled=busy;
+ if(busy){if(!btn.dataset.origText)btn.dataset.origText=btn.textContent;btn.textContent=label||'Please wait…';}
+ else if(btn.dataset.origText){btn.textContent=btn.dataset.origText;}
+}
+
+async function buy(app,plan,cycle,btn){
+ var sessRes=await sb.auth.getSession();
+ var sess=sessRes.data&&sessRes.data.session;
+ if(!sess){
+  location.href='/login/?return='+encodeURIComponent(location.pathname+location.search);
+  return;
+ }
+ setBusy(btn,true,'Starting checkout…');
+ try{
+  var orderRes=await fetch(FN+'/create-order',{
+   method:'POST',
+   headers:{'Content-Type':'application/json','Authorization':'Bearer '+sess.access_token},
+   body:JSON.stringify({app:app,plan:plan,billing_cycle:cycle})
+  });
+  var order=await orderRes.json();
+  if(!order.ok){throw new Error(order.error||'order_failed');}
+
+  var rzp=new Razorpay({
+   key:order.key_id,
+   order_id:order.order_id,
+   amount:order.amount,
+   currency:'INR',
+   name:'Prabhas SaaS',
+   description:app+' — '+plan,
+   prefill:{email:sess.user.email||''},
+   theme:{color:'#1b2a4a'},
+   handler:async function(resp){
+    setBusy(btn,true,'Confirming payment…');
+    try{
+     var vRes=await fetch(FN+'/verify-payment',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+sess.access_token},
+      body:JSON.stringify({
+       razorpay_order_id:resp.razorpay_order_id,
+       razorpay_payment_id:resp.razorpay_payment_id,
+       razorpay_signature:resp.razorpay_signature,
+       amount:order.amount,kind:'plan',plan:plan,app:app,billing_cycle:cycle
+      })
+     });
+     var v=await vRes.json();
+     if(!v.ok){throw new Error(v.error||'verify_failed');}
+     setBusy(btn,false);
+     btn.textContent='Active ✓';
+     alert('Payment received — your plan is now active. Opening Lekhya…');
+     location.href='https://lekhya.prabhassaas.in';
+    }catch(e){
+     setBusy(btn,false);
+     alert('Payment received, but activation had an issue. Please contact support with payment ID '+resp.razorpay_payment_id+'.');
+    }
+   },
+   modal:{ondismiss:function(){setBusy(btn,false);}}
+  });
+  rzp.on('payment.failed',function(){setBusy(btn,false);alert('Payment failed. Please try again.');});
+  rzp.open();
+ }catch(e){
+  setBusy(btn,false);
+  alert('Could not start checkout: '+(e.message||e));
+ }
+}
+
+buyBtns.forEach(function(btn){
+ btn.addEventListener('click',function(){
+  buy(btn.getAttribute('data-buy-app'),btn.getAttribute('data-buy-plan'),btn.getAttribute('data-buy-cycle'),btn);
+ });
 });
 })();</script></body></html>
