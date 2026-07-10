@@ -502,7 +502,10 @@ function esc(x){return (x||'').replace(/[&<>"]/g,function(m){return {'&':'&amp;'
 function pill(a){if(a.status!=='live')return '<span class="pill soon">SOON</span>';return a.entitled?'<span class="pill live">ACTIVE</span>':'<span class="pill locked">LOCKED</span>';}
 function btn(a){
  if(a.status!=='live')return '<span class="btn btn-ghost disabled">Coming soon</span>';
- if(a.entitled)return '<a class="btn btn-primary" href="'+a.open_url+'">Enter the App →</a>';
+ if(a.entitled){
+  if(a.id==='lekhya')return '<a class="btn btn-primary" href="#" data-sso-app="lekhya">Enter the App →</a>';
+  return '<a class="btn btn-primary" href="'+a.open_url+'">Enter the App →</a>';
+ }
  return '<a class="btn btn-primary" href="/pricing/?app='+a.id+'">Subscribe to unlock</a>';
 }
 function appCard(a){
@@ -592,5 +595,33 @@ W.forEach(function(w){
    var t=setInterval(function(){n--;var b=msg&&msg.querySelector('b');if(b)b.textContent=n;if(n<=0){clearInterval(t);location.href='/';}},1000);
   }catch(e){btn.disabled=false;btn.textContent=lbl;say('Something went wrong. Please try again.','err');}
  };
+});
+})();</script><script>(function(){
+if(!window.supabase)return;
+var sb=window.supabase.createClient("https://ezgfvvqwokxvqmheijmd.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6Z2Z2dnF3b2t4dnFtaGVpam1kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjY1MTIsImV4cCI6MjA5NjkwMjUxMn0.VwmCIsDqIbLzWmmgXqkIiIO5z27fAUitiWhYT7L1pkI");
+var FN="https://ezgfvvqwokxvqmheijmd.supabase.co/functions/v1";
+document.addEventListener('click',async function(e){
+ var btn=e.target.closest('[data-sso-app]');
+ if(!btn)return;
+ e.preventDefault();
+ var app=btn.getAttribute('data-sso-app');
+ var orig=btn.textContent;
+ btn.textContent='Opening…';
+ try{
+  var sessRes=await sb.auth.getSession();
+  var sess=sessRes.data&&sessRes.data.session;
+  if(!sess){location.href='/login/';return;}
+  var r=await fetch(FN+'/sso-'+app,{
+   method:'POST',
+   headers:{'Content-Type':'application/json','Authorization':'Bearer '+sess.access_token},
+   body:JSON.stringify({})
+  });
+  var out=await r.json();
+  if(!out.ok){throw new Error(out.error||'sso_failed');}
+  location.href=out.url;
+ }catch(err){
+  btn.textContent=orig;
+  alert('Could not open '+app+' right now. Please try again in a moment.');
+ }
 });
 })();</script></body></html>
