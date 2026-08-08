@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/shilp3d/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b1220" />
+    <meta
+      name="description"
+      content="Shilp3D — free, browser-first engineering blueprint and interior sketch platform for civil, architectural and structural drafting."
+    />
+    <title>Shilp3D — Engineering Blueprint Platform</title>
+    <script>
+      // Apply the stored theme before first paint. Without this the dark
+      // default would flash for a light-theme user on every load.
+      (function () {
+        try {
+          var stored = localStorage.getItem('shilp3d.theme');
+          var pref = stored === 'light' || stored === 'dark' ? stored : 'system';
+          var theme =
+            pref === 'system'
+              ? window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light'
+              : pref;
+          document.documentElement.dataset.theme = theme;
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', theme === 'light' ? '#f8fafc' : '#020617');
+        } catch (e) {
+          document.documentElement.dataset.theme = 'dark';
+        }
+      })();
+    </script>
+    <script type="module" crossorigin src="/shilp3d/assets/index-ChKKzUXd.js"></script>
+    <link rel="stylesheet" crossorigin href="/shilp3d/assets/index-C5-rZHsm.css">
+  <link rel="manifest" href="/shilp3d/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/shilp3d/registerSW.js"></script></head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
