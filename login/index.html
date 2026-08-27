@@ -79,8 +79,53 @@ input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(12
   var APPS={
     seedhabill:{name:"Seedha Bill",ret:"/app/seedhabill/app.html"},
     lekhya:{name:"Lekhya AI",ret:"/app/lekhya/"},
-    desk:{name:"Desk",ret:"/app/desk/"}
+    desk:{name:"Desk",ret:"/app/desk/"},
+    shilp3d:{name:"Shilp3D",ret:"https://shilp3d.prabhassaas.in/"}
   };
+
+  /* Where a session may be handed to.
+   *
+   * This list is the whole security of the handoff below, and it is not
+   * optional. `?return=` comes from the query string, so anyone can put
+   * anything in it; without a check, a crafted link would send a signed-in
+   * person to an attacker's page with their access token in the fragment.
+   * Only Prabhas SaaS hosts are ever given a token. */
+  function trustedForHandoff(u){
+    return u.protocol==="https:" &&
+      (u.hostname==="prabhassaas.in" ||
+       /* Length written out rather than counted by hand: the first attempt
+          used 17 for a 15-character suffix and rejected the app itself. */
+       u.hostname.slice(-".prabhassaas.in".length)===".prabhassaas.in");
+  }
+
+  /* Send the person on, carrying their session if the destination is a
+   * different site.
+   *
+   * Apps on their own subdomain — shilp3d.prabhassaas.in — cannot read the
+   * session stored here: localStorage is per origin, so signing in on
+   * prabhassaas.in leaves them signed out. That is exactly what kept being
+   * reported as "I logged in on the website but the app asks again".
+   *
+   * The tokens travel in the URL *fragment*, never the query string. A
+   * fragment is not sent to servers, so it cannot land in an access log or a
+   * proxy trace on the way. This is the same shape Supabase's own OAuth
+   * redirect uses, which is why the app already knows how to read it. */
+  function handoff(session){
+    var d=absdest();
+    try{
+      var u=new URL(d, location.origin);
+      if(u.origin!==location.origin && session && session.access_token){
+        if(!trustedForHandoff(u)){ location.href="/account/"; return; }
+        u.hash="access_token="+encodeURIComponent(session.access_token)
+          +"&refresh_token="+encodeURIComponent(session.refresh_token||"")
+          +"&expires_in="+(session.expires_in||3600)
+          +"&token_type=bearer";
+        location.href=u.toString();
+        return;
+      }
+    }catch(e){}
+    location.href=d;
+  }
   var conf=APPS[app]||{name:"Prabhas SaaS",ret:"/account/"};
   function dest(){var r=q.get("return");if(r)return r;if(app&&APPS[app])return APPS[app].ret;return (mode==="signup")?"/pricing/":"/account/";}
   function absdest(){var d=dest();return d.charAt(0)==="/"?location.origin+d:d;}
@@ -108,7 +153,7 @@ input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(12
   }
 
   // already signed in -> go straight through
-  sb.auth.getSession().then(function(r){ if(r.data && r.data.session){ location.href=dest(); } });
+  sb.auth.getSession().then(function(r){ if(r.data && r.data.session){ handoff(r.data.session); } });
 
   $("gbtn").onclick=function(){
     clearMsg();
@@ -125,12 +170,12 @@ input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(12
       if(mode==="signup"){
         var r=await sb.auth.signUp({email:email,password:pass,options:{emailRedirectTo:absdest()}});
         if(r.error){ msg(r.error.message); }
-        else if(r.data.session){ location.href=dest(); }
+        else if(r.data.session){ handoff(r.data.session); }
         else { msg("Check your inbox to confirm your email, then sign in.","ok"); }
       }else{
         var r2=await sb.auth.signInWithPassword({email:email,password:pass});
         if(r2.error){ msg(r2.error.message); }
-        else { location.href=dest(); }
+        else { handoff(r2.data && r2.data.session); }
       }
     }catch(e){ msg("Something went wrong. Please try again."); }
     btn.disabled=false; btn.textContent=label;
