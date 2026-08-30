@@ -115,7 +115,7 @@ input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(12
     try{
       var u=new URL(d, location.origin);
       if(u.origin!==location.origin && session && session.access_token){
-        if(!trustedForHandoff(u)){ location.href="/account/"; return; }
+        if(!trustedForHandoff(u)){ location.href="https://accounts.prabhassaas.in/"; return; }
         u.hash="access_token="+encodeURIComponent(session.access_token)
           +"&refresh_token="+encodeURIComponent(session.refresh_token||"")
           +"&expires_in="+(session.expires_in||3600)
