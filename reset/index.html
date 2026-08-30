@@ -62,10 +62,10 @@ button.submit:disabled{opacity:.6;cursor:default}
   <div class="tri"><span class="s"></span><span class="w"></span><span class="g"></span></div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/pss-auth.js"></script>
 <script>
 (function(){
-  var sb=window.supabase.createClient("https://ezgfvvqwokxvqmheijmd.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6Z2Z2dnF3b2t4dnFtaGVpam1kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjY1MTIsImV4cCI6MjA5NjkwMjUxMn0.VwmCIsDqIbLzWmmgXqkIiIO5z27fAUitiWhYT7L1pkI");
+  var sb=window.pssClient("https://ezgfvvqwokxvqmheijmd.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6Z2Z2dnF3b2t4dnFtaGVpam1kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjY1MTIsImV4cCI6MjA5NjkwMjUxMn0.VwmCIsDqIbLzWmmgXqkIiIO5z27fAUitiWhYT7L1pkI");
   var $=function(id){return document.getElementById(id);};
   var done=false;
   function show(v){['loadingView','formView','badView'].forEach(function(x){$(x).classList.add('hidden');});$(v).classList.remove('hidden');}

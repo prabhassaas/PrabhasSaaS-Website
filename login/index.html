@@ -68,12 +68,12 @@ input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(12
   <p class="back"><a href="/">&larr; Back to prabhassaas.in</a></p>
 <div style="text-align:center;margin-top:6px;font-size:11px;color:#9aa3b2;font-family:monospace">Login v1.0.0</div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/pss-auth.js"></script>
 <script>
 (function(){
   var SB_URL="https://ezgfvvqwokxvqmheijmd.supabase.co";
   var SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6Z2Z2dnF3b2t4dnFtaGVpam1kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjY1MTIsImV4cCI6MjA5NjkwMjUxMn0.VwmCIsDqIbLzWmmgXqkIiIO5z27fAUitiWhYT7L1pkI";
-  var sb=window.supabase.createClient(SB_URL,SB_KEY);
+  var sb=window.pssClient(SB_URL,SB_KEY);
   var q=new URLSearchParams(location.search);
   var app=(q.get("app")||"").toLowerCase();
   var APPS={
