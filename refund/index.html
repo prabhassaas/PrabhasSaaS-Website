@@ -559,7 +559,7 @@ sb.auth.getSession().then(async function(r){
  box.innerHTML='<div class="acct" id="acctW"><button class="acct-b" type="button" aria-label="Account">'+av+'</button>'
   +'<div class="acct-menu"><div class="acct-head"><b>'+name+'</b><span>'+email+'</span></div>'
   +'<a href="https://accounts.prabhassaas.in/">My account</a>'
-  +'<a id="admL" href="/admin/" style="display:none">Admin</a>'
+  +'<a id="admL" href="https://admin.prabhassaas.in" style="display:none">Admin</a>'
   +'<a href="#" id="logoutL">Log out</a></div></div>';
  var w=document.getElementById('acctW');
  w.querySelector('.acct-b').onclick=function(e){e.stopPropagation();w.classList.toggle('open');};

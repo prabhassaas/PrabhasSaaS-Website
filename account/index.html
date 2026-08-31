@@ -489,7 +489,7 @@ a.tcard.live:hover{border-color:#7A1F2B;box-shadow:0 8px 24px rgba(13,20,40,.08)
   <path d="M10 9H8" />
   <path d="M16 13H8" />
   <path d="M16 17H8" />
-</svg></span><span class="dtx"><span class="dt">Dastavej</span><span class="dd">Free PDF editor</span></span></a><a href="https://shilp3d.prabhassaas.in/"><span class="di" style="background:#0369a1"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 22 20H2z"/><path d="M7.5 14h9"/></svg></span><span class="dtx"><span class="dt">Shilp3D</span><span class="dd">Blueprint drafting</span></span></a></div></div><a class="navlink" href="/pricing/">Pricing</a><a class="navlink" href="/business-model/">Business</a><a class="navlink" href="/tools/">Free Tools</a><a class="navlink" href="/contact/">Contact</a></nav><div class="nav-auth"><a class="nav-login" href="/login/">Log in</a><a class="nav-cta" href="/login/?mode=signup">Sign up</a><a class="nav-login nav-admin" href="/admin/">Admin</a><span id="langMount" style="display:flex;align-items:center;margin-left:6px"></span></div></div><button class="burger" data-burger aria-label="Menu"><span></span><span></span><span></span></button></div></header><main><section class="acctp"><div id="acctRoot" data-notranslate class="acct-loading">Loading your account…</div></section>
+</svg></span><span class="dtx"><span class="dt">Dastavej</span><span class="dd">Free PDF editor</span></span></a><a href="https://shilp3d.prabhassaas.in/"><span class="di" style="background:#0369a1"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 22 20H2z"/><path d="M7.5 14h9"/></svg></span><span class="dtx"><span class="dt">Shilp3D</span><span class="dd">Blueprint drafting</span></span></a></div></div><a class="navlink" href="/pricing/">Pricing</a><a class="navlink" href="/business-model/">Business</a><a class="navlink" href="/tools/">Free Tools</a><a class="navlink" href="/contact/">Contact</a></nav><div class="nav-auth"><a class="nav-login" href="/login/">Log in</a><a class="nav-cta" href="/login/?mode=signup">Sign up</a><a class="nav-login nav-admin" href="https://admin.prabhassaas.in">Admin</a><span id="langMount" style="display:flex;align-items:center;margin-left:6px"></span></div></div><button class="burger" data-burger aria-label="Menu"><span></span><span></span><span></span></button></div></header><main><section class="acctp"><div id="acctRoot" data-notranslate class="acct-loading">Loading your account…</div></section>
 <script>(function(){
 if(!window.supabase)return;
 var sb=window.pssClient("https://ezgfvvqwokxvqmheijmd.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6Z2Z2dnF3b2t4dnFtaGVpam1kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjY1MTIsImV4cCI6MjA5NjkwMjUxMn0.VwmCIsDqIbLzWmmgXqkIiIO5z27fAUitiWhYT7L1pkI");
@@ -551,7 +551,7 @@ sb.auth.getSession().then(async function(r){
   +'<div class="conn-note">Available when Lekhya launches.</div></div>';
  var aiHtml='<div class="acct-sec">AI access</div><div class="ai-card"><div class="ai-ic">V</div>'
   +'<div><b>Vyasa 1.0</b><p>'+(aiApps.length?('Active in '+aiApps.map(function(a){return esc(a.name);}).join(', ')+'.'):'Your in-app AI for drafting, summaries and answers — included with Lekhya and Desk. Arriving soon.')+'</p></div></div>';
- document.getElementById("acctRoot").innerHTML=head+sum+cards+connHtml+aiHtml;
+ var adminHtml="";try{var _ia=await sb.from("profiles").select("is_admin").eq("id",u.id).maybeSingle();if(_ia&&_ia.data&&_ia.data.is_admin){adminHtml='<a href="https://admin.prabhassaas.in" style="display:inline-flex;align-items:center;gap:8px;margin:2px 0 18px;padding:11px 18px;background:#111827;color:#fff;border-radius:11px;font-weight:700;text-decoration:none">&#128737; Admin Control Plane &rarr;</a>';}}catch(_e){}document.getElementById("acctRoot").innerHTML=head+adminHtml+sum+cards+connHtml+aiHtml;
  var tg=document.getElementById('syncTgl');
  if(tg&&!tg.disabled){tg.onchange=function(){tg.disabled=true;
    sb.rpc('set_app_connection',{p_from:'seedhabill',p_to:'lekhya',p_kind:'auto_sync',p_on:tg.checked}).then(function(){tg.disabled=false;}).catch(function(){tg.checked=!tg.checked;tg.disabled=false;});};}
@@ -568,7 +568,7 @@ sb.auth.getSession().then(async function(r){
  box.innerHTML='<div class="acct" id="acctW"><button class="acct-b" type="button" aria-label="Account">'+av+'</button>'
   +'<div class="acct-menu"><div class="acct-head"><b>'+name+'</b><span>'+email+'</span></div>'
   +'<a href="https://accounts.prabhassaas.in/">My account</a>'
-  +'<a id="admL" href="/admin/" style="display:none">Admin</a>'
+  +'<a id="admL" href="https://admin.prabhassaas.in" style="display:none">Admin</a>'
   +'<a href="#" id="logoutL">Log out</a></div></div>';
  var w=document.getElementById('acctW');
  w.querySelector('.acct-b').onclick=function(e){e.stopPropagation();w.classList.toggle('open');};
