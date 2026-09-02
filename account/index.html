@@ -545,7 +545,7 @@ sb.auth.getSession().then(async function(r){
  var connHtml='<div class="acct-sec">Inter-app connectivity</div>'
   +'<div class="conn-card"><div class="conn-row"><div class="conn-txt"><b>Seedha Bill → Lekhya</b><span>Auto-sync finalised invoices straight into your books.</span></div>'
   +'<label class="sw'+(canSync?'':' off')+'"><input type="checkbox" id="syncTgl"'+(syncOn?' checked':'')+(canSync?'':' disabled')+'><span class="sl"></span></label></div>'
-  +(canSync?'':(hasLK?'<div class="conn-note">Activate Seedha Bill to enable auto-sync.</div>':'<div class="conn-note" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">Subscribe to Lekhya to turn on auto-sync into your books.<a href="https://prabhassaas.in/pricing/?app=lekhya" style="background:#1B2A4A;color:#fff;padding:7px 14px;border-radius:8px;text-decoration:none;font-weight:700;white-space:nowrap">Subscribe to Lekhya &rarr;</a></div>'))+'</div>'
+  +(canSync?'':(hasLK?'<div class="conn-note">Activate Seedha Bill to enable auto-sync.</div>':'<div class="conn-note" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">Subscribe to Lekhya to turn on auto-sync into your books.<button onclick="lekhyaConnect(this)" style="background:#1B2A4A;color:#fff;padding:7px 14px;border:0;border-radius:8px;font-weight:700;white-space:nowrap;cursor:pointer">Connect Seedha Bill &rarr; Lekhya</button></div>'))+'</div>'
   +'<div class="conn-card"><div class="conn-txt"><b>Connect your accountant</b><span>Have a CA on Lekhya Pramaan? Paste their Client Connection Token to route your invoices for professional verification.</span></div>'
   +'<div class="tok"><input type="text" placeholder="Paste connection token" disabled><button class="btn btn-ghost disabled">Connect</button></div>'
   +'<div class="conn-note">Available when Lekhya launches.</div></div>';
@@ -632,4 +632,37 @@ document.addEventListener('click',async function(e){
   alert('Could not open '+app+' right now. Please try again in a moment.');
  }
 });
-})();</script></body></html>
+})();</script><script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+window.lekhyaConnect=async function(btn){
+ var U="https://ezgfvvqwokxvqmheijmd.supabase.co",K="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6Z2Z2dnF3b2t4dnFtaGVpam1kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjY1MTIsImV4cCI6MjA5NjkwMjUxMn0.VwmCIsDqIbLzWmmgXqkIiIO5z27fAUitiWhYT7L1pkI";
+ var _sb=(window.pssClient?window.pssClient(U,K):window.supabase.createClient(U,K));
+ var old=btn?btn.textContent:""; if(btn){btn.disabled=true;btn.textContent="Checking\u2026";}
+ function reset(){ if(btn){btn.disabled=false;btn.textContent=old;} }
+ try{
+  var sres=await _sb.auth.getSession(); var tok=sres&&sres.data&&sres.data.session?sres.data.session.access_token:null;
+  if(!tok){ location.href="/login/?return=/"; return; }
+  var H={"Content-Type":"application/json",apikey:K,Authorization:"Bearer "+tok};
+  async function connect(){ var r=await fetch(U+"/functions/v1/lekhya-connect",{method:"POST",headers:H,body:"{}"}); return r.json(); }
+  var res=await connect();
+  if(res.ok&&res.connected){ alert("Connected \u2713 Your finalised invoices will now post into your Lekhya books."); location.reload(); return; }
+  if(res.needs_payment){
+   if(btn)btn.textContent="Opening payment\u2026";
+   var ord=await(await fetch(U+"/functions/v1/create-order",{method:"POST",headers:H,body:JSON.stringify({amount:res.amount,plan:res.plan,app:"lekhya"})})).json();
+   if(!ord.ok){ throw new Error(ord.error||"order_failed"); }
+   var rzp=new Razorpay({key:ord.key_id,order_id:ord.order_id,amount:ord.amount,currency:"INR",name:"Prabhas SaaS",description:(res.label||"Lekhya")+" subscription",theme:{color:"#1B2A4A"},
+    handler:async function(resp){
+     var v=await(await fetch(U+"/functions/v1/verify-payment",{method:"POST",headers:H,body:JSON.stringify({razorpay_order_id:resp.razorpay_order_id,razorpay_payment_id:resp.razorpay_payment_id,razorpay_signature:resp.razorpay_signature,amount:res.amount,kind:"plan",plan:res.plan,app:"lekhya"})})).json();
+     if(!v.ok){ alert("Payment verification failed: "+(v.error||"")); reset(); return; }
+     var r2=await connect();
+     if(r2.ok&&r2.connected){ alert("Subscribed & connected \u2713 Invoices will now post into your Lekhya books."); location.reload(); }
+     else { alert("Subscribed, but linking failed: "+(r2.error||"")+". Please click Connect again."); reset(); }
+    },
+    modal:{ondismiss:function(){ reset(); }}});
+   rzp.open(); return;
+  }
+  throw new Error(res.error||"connect_failed");
+ }catch(e){ alert("Could not connect: "+(e.message||e)); reset(); }
+};
+</script>
+</body></html>
