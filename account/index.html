@@ -545,7 +545,7 @@ sb.auth.getSession().then(async function(r){
  var connHtml='<div class="acct-sec">Inter-app connectivity</div>'
   +'<div class="conn-card"><div class="conn-row"><div class="conn-txt"><b>Seedha Bill → Lekhya</b><span>Auto-sync finalised invoices straight into your books.</span></div>'
   +'<label class="sw'+(canSync?'':' off')+'"><input type="checkbox" id="syncTgl"'+(syncOn?' checked':'')+(canSync?'':' disabled')+'><span class="sl"></span></label></div>'
-  +(canSync?'':'<div class="conn-note">Unlocks when you have both Seedha Bill and Lekhya active.</div>')+'</div>'
+  +(canSync?'':(hasLK?'<div class="conn-note">Activate Seedha Bill to enable auto-sync.</div>':'<div class="conn-note" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">Subscribe to Lekhya to turn on auto-sync into your books.<a href="https://prabhassaas.in/pricing/?app=lekhya" style="background:#1B2A4A;color:#fff;padding:7px 14px;border-radius:8px;text-decoration:none;font-weight:700;white-space:nowrap">Subscribe to Lekhya &rarr;</a></div>'))+'</div>'
   +'<div class="conn-card"><div class="conn-txt"><b>Connect your accountant</b><span>Have a CA on Lekhya Pramaan? Paste their Client Connection Token to route your invoices for professional verification.</span></div>'
   +'<div class="tok"><input type="text" placeholder="Paste connection token" disabled><button class="btn btn-ghost disabled">Connect</button></div>'
   +'<div class="conn-note">Available when Lekhya launches.</div></div>';
