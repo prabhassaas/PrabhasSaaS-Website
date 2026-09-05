@@ -95,6 +95,7 @@ label{display:block;font-size:.82rem;font-weight:600;margin-bottom:5px;color:var
 #adminTabs.admin-tabs button{width:100%;text-align:left;border:0;border-bottom:0;border-radius:9px;padding:10px 12px;margin:0;color:#c7d0e4;font-weight:600;font-size:.9rem}
 #adminTabs.admin-tabs button:hover{background:rgba(255,255,255,.07);color:#fff}
 #adminTabs.admin-tabs button.on{background:#fff;color:var(--ink)}
+.lead-f.on{background:#1B2A4A;color:#fff;border-color:#1B2A4A}
 .main{min-width:0}
 .topbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
 #appTabs.app-tabs{margin:0;gap:6px}
@@ -289,6 +290,20 @@ label{display:block;font-size:.82rem;font-weight:600;margin-bottom:5px;color:var
         <span id="autoCloseMsg" class="hint"></span>
       </div>
       <div id="ticketList" data-notranslate><div class="hint">Loading…</div></div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <h2 style="font-family:'Montserrat',sans-serif">Website leads</h2>
+        <button class="btn btn-ghost" id="leadRefresh" style="width:auto">Refresh</button>
+      </div>
+      <p style="color:var(--muted);font-size:.86rem;margin-bottom:12px">Enquiries submitted through the public contact form. Each one is emailed to admin@prabhassaas.in with the same reference code shown here.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px" id="leadFilters">
+        <button class="btn btn-ghost lead-f on" data-lf="all" style="width:auto;font-size:.8rem">All</button>
+        <button class="btn btn-ghost lead-f" data-lf="new" style="width:auto;font-size:.8rem">New</button>
+        <button class="btn btn-ghost lead-f" data-lf="contacted" style="width:auto;font-size:.8rem">Contacted</button>
+        <button class="btn btn-ghost lead-f" data-lf="closed" style="width:auto;font-size:.8rem">Closed</button>
+      </div>
+      <div id="leadList" data-notranslate><div class="hint">Loading…</div></div>
     </div>
     <div class="card" id="plansCard">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
@@ -1043,6 +1058,69 @@ async function setReview(id,status){
   loadAdminReviews();
 }
 
+/* ====== WEBSITE LEADS (public contact form) ====== */
+let leadFilter="all";
+
+function leadPill(s){
+  const map={new:["#0a7a4f","#e7f8f0","New"],contacted:["#a8460a","#fff4e5","Contacted"],closed:["#5a6378","#eef0f4","Closed"]};
+  const [fg,bg,label]=map[s]||map.new;
+  return `<span style="background:${bg};color:${fg};font-size:.68rem;font-weight:800;padding:3px 9px;border-radius:999px;letter-spacing:.04em;text-transform:uppercase">${label}</span>`;
+}
+
+async function loadLeads(){
+  const box=$("leadList"); if(!box)return;
+  box.innerHTML='<div class="hint">Loading…</div>';
+  let q=sb.from("contact_leads").select("*").order("created_at",{ascending:false}).limit(200);
+  if(leadFilter!=="all")q=q.eq("status",leadFilter);
+  const {data,error}=await q;
+  if(error){box.innerHTML='<div class="hint">Couldn\u2019t load leads.</div>';return;}
+  if(!data||!data.length){box.innerHTML='<div class="hint">No leads yet.</div>';return;}
+  box.innerHTML=data.map(l=>{
+    const when=new Date(l.created_at).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short"});
+    const svc=(l.services||[]).map(s=>`<span style="background:#f3f5fb;color:#1B2A4A;font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:999px">${esc(s)}</span>`).join(" ");
+    const next=l.status==="new"?"contacted":(l.status==="contacted"?"closed":"new");
+    const nextLabel=l.status==="new"?"Mark contacted":(l.status==="contacted"?"Mark closed":"Reopen");
+    return `<div style="border:1px solid var(--rule);border-radius:11px;padding:14px 16px;margin-bottom:10px;background:#fff">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <strong style="letter-spacing:.05em;color:#1B2A4A">${esc(l.submission_code)}</strong>
+          ${leadPill(l.status)}
+        </div>
+        <span class="hint">${esc(when)}</span>
+      </div>
+      <div style="font-size:.92rem;margin-bottom:4px"><strong>${esc(l.name)}</strong>${l.company?` · ${esc(l.company)}`:""}</div>
+      <div style="font-size:.86rem;color:var(--muted);margin-bottom:8px">
+        <a href="mailto:${esc(l.email)}?subject=Re:%20${encodeURIComponent(l.submission_code)}">${esc(l.email)}</a>${l.phone?` · ${esc(l.phone)}`:""}
+      </div>
+      ${svc?`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">${svc}</div>`:""}
+      <div style="background:#FAFAF7;border:1px solid var(--rule);border-radius:9px;padding:10px 12px;font-size:.88rem;white-space:pre-wrap;margin-bottom:10px">${esc(l.message)}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-ghost" style="width:auto;font-size:.8rem" data-lead-next="${l.id}" data-lead-status="${next}">${nextLabel}</button>
+        <a class="btn btn-ghost" style="width:auto;font-size:.8rem" href="mailto:${esc(l.email)}?subject=Re:%20${encodeURIComponent(l.submission_code)}">Reply by email</a>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+document.addEventListener("click",async e=>{
+  const t=e.target;
+  if(!t)return;
+  if(t.id==="leadRefresh")loadLeads();
+  if(t.dataset&&t.dataset.lf){
+    leadFilter=t.dataset.lf;
+    document.querySelectorAll(".lead-f").forEach(b=>b.classList.toggle("on",b===t));
+    loadLeads();
+  }
+  if(t.dataset&&t.dataset.leadNext){
+    t.disabled=true;
+    const {error}=await sb.from("contact_leads")
+      .update({status:t.dataset.leadStatus,updated_at:new Date().toISOString()})
+      .eq("id",t.dataset.leadNext);
+    if(error){alert("Couldn't update that lead.");t.disabled=false;return;}
+    loadLeads();
+  }
+});
+
 /* ====== AUTO-CLOSE SETTING ====== */
 async function loadAutoClose(){
   try{
@@ -1108,6 +1186,7 @@ function buildAdminTabs(){
     ["Overview",        ["Overview"]],
     ["Users",           ["All users","Trial accounts","Customers"]],
     ["Support Tickets", ["Support tickets"]],
+    ["Leads",           ["Website leads"]],
     ["App Health",      ["Database usage","AI bug-fixer","Audit log","Profile edit lock","GST verification"]],
     ["Appearance",      ["Appearance"]],
     ["Billing",         ["Plans & pricing","Loyalty discounts","Message quota per plan","Discount codes","Plan refund requests"]],
@@ -1235,6 +1314,7 @@ async function runAdmin(session){
   try{ loadDbUsage(); }catch(_){}
   try{ loadAdminReviews(); }catch(_){}
   try{ loadAutoClose(); }catch(_){}
+  try{ loadLeads(); }catch(_){}
 }
   let _adminLoadedFor=null, _adminLoading=null;
   sb.auth.onAuthStateChange((_e,session)=>{
