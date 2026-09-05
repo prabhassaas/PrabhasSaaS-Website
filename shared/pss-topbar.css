@@ -1,0 +1,326 @@
+/* ==========================================================================
+   Prabhas SaaS — shared app top bar
+   The one piece of chrome every Prabhas app shares. Each app supplies its own
+   logo, accent colour, nav links and CTA; the structure and metrics are fixed
+   so the bar reads as the same bar across apps.
+
+   Everything is namespaced under .pss-* and all colour comes from two custom
+   properties, so this file can be dropped into an app with its own CSS without
+   collisions. Set the accent on the root element:
+
+     <header class="pss-topbar" style="--pss-accent:#7A1F2B">
+
+   Spec + markup: docs/TOPBAR.md
+   ========================================================================== */
+
+.pss-topbar {
+  --pss-accent: #1B2A4A;          /* app brand colour */
+  --pss-accent-ink: #ffffff;      /* text/icon on the accent */
+  --pss-h: 64px;
+
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: #fff;
+  border-bottom: 1px solid #f3f4f6;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  /* The bar sets its own box model so a host page's global `* { }` rules,
+     which vary a lot between these apps, can't reshape it. */
+  box-sizing: border-box;
+}
+.pss-topbar *, .pss-topbar *::before, .pss-topbar *::after { box-sizing: border-box; }
+
+/* Host-CSS defence. These apps each carry their own stylesheet and several of
+   them style bare element selectors — SeedhaBill, for instance, gives every
+   `nav` a sticky translucent bar with a bottom rule, which lands on the bar's
+   own inner <nav>. Neutralise that on the specific elements the bar owns.
+   Kept at .pss-topbar + class specificity so it beats a host's element rule
+   without outranking the component rules further down this file. */
+.pss-topbar .pss-nav,
+.pss-topbar .pss-topbar__in {
+  position: static;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  margin: 0;
+}
+.pss-topbar .pss-nav a,
+.pss-topbar .pss-pop a,
+.pss-topbar .pss-mobile a,
+.pss-topbar .pss-home,
+.pss-topbar .pss-brand,
+.pss-topbar .pss-link,
+.pss-topbar .pss-cta {
+  text-decoration: none;
+  text-transform: none;
+  box-shadow: none;
+}
+.pss-topbar a::after, .pss-topbar a::before,
+.pss-topbar button::after, .pss-topbar button::before { content: none; }
+
+/* Several of these apps set `display` on bare element/class selectors, which
+   outranks the UA rule for [hidden]. The signed-in/out swap depends on [hidden]
+   actually hiding, so pin it. */
+.pss-topbar [hidden] { display: none !important; }
+
+.pss-topbar__in {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 16px;
+  height: var(--pss-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+@media (min-width: 640px) { .pss-topbar__in { padding: 0 24px; } }
+@media (min-width: 1024px) { .pss-topbar__in { padding: 0 32px; } }
+
+/* ---------- left: Prabhas SaaS home + app identity ---------- */
+.pss-topbar__left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+
+.pss-home {
+  display: none;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  line-height: 1;
+  color: #9ca3af;
+  text-decoration: none;
+  border-right: 1px solid #e5e7eb;
+  padding-right: 12px;
+  margin-right: 4px;
+  white-space: nowrap;
+  transition: color .15s;
+}
+.pss-home:hover { color: var(--pss-accent); }
+@media (min-width: 768px) { .pss-home { display: flex; } }
+
+.pss-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  min-width: 0;
+}
+.pss-brand__mark {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: var(--pss-accent);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.pss-brand__mark img, .pss-brand__mark svg { width: 20px; height: 20px; display: block; }
+/* Some marks already carry their own plate (Dastavej's is a gradient tile with
+   the glyph inside). Those go bare — no accent plate behind them — and fill the
+   tile themselves, rather than being a glyph sitting on the accent. */
+.pss-brand__mark--bare, .pss-switch__mark--bare { background: transparent; }
+.pss-brand__mark--bare img, .pss-brand__mark--bare svg,
+.pss-switch__mark--bare img, .pss-switch__mark--bare svg {
+  width: 100%; height: 100%; object-fit: contain;
+}
+.pss-brand__name {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--pss-accent);
+  letter-spacing: -.01em;
+  white-space: nowrap;
+}
+
+/* ---------- centre: app nav ---------- */
+.pss-nav { display: none; align-items: center; gap: 32px; }
+@media (min-width: 768px) { .pss-nav { display: flex; } }
+.pss-nav a {
+  font-size: 14px;
+  font-weight: 500;
+  color: #4b5563;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color .15s;
+}
+.pss-nav a:hover, .pss-nav a[aria-current="page"] { color: var(--pss-accent); }
+
+/* ---------- right: actions ---------- */
+.pss-actions { display: none; align-items: center; gap: 12px; }
+@media (min-width: 768px) { .pss-actions { display: flex; } }
+
+.pss-link {
+  font-size: 14px; font-weight: 500;
+  color: var(--pss-accent);
+  text-decoration: none;
+  padding: 8px 16px;
+  white-space: nowrap;
+}
+.pss-link:hover { opacity: .85; }
+
+.pss-cta {
+  font-size: 14px; font-weight: 600;
+  background: var(--pss-accent);
+  color: var(--pss-accent-ink);
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  white-space: nowrap;
+  transition: filter .15s;
+}
+.pss-cta:hover { filter: brightness(.92); }
+/* Trial/growth CTAs use the Prabhas saffron rather than the app accent, so the
+   "start" action reads the same everywhere. */
+.pss-cta--saffron { background: #f2a024; color: #1b2a4a; }
+
+/* ---------- app switcher + user menu ---------- */
+.pss-menu { position: relative; }
+
+.pss-switch {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 14px; font-weight: 500;
+  color: var(--pss-accent);
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 7px 12px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color .15s, background .15s;
+}
+.pss-switch:hover { border-color: #d1d5db; background: #f9fafb; }
+.pss-switch__mark {
+  width: 20px; height: 20px; border-radius: 4px;
+  background: var(--pss-accent);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; overflow: hidden;
+}
+.pss-switch__mark img, .pss-switch__mark svg { width: 12px; height: 12px; display: block; }
+
+.pss-user {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 8px;
+  border: 0; background: none; border-radius: 8px;
+  cursor: pointer; font-family: inherit;
+  transition: background .15s;
+}
+.pss-user:hover { background: #f9fafb; }
+.pss-user__avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--pss-accent);
+  color: var(--pss-accent-ink);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; letter-spacing: .02em;
+  flex-shrink: 0;
+}
+.pss-user__name {
+  font-size: 14px; font-weight: 500; color: #374151;
+  max-width: 7rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+.pss-caret { width: 12px; height: 12px; color: #9ca3af; flex-shrink: 0; transition: transform .15s; }
+[aria-expanded="true"] .pss-caret { transform: rotate(180deg); }
+
+.pss-pop {
+  position: absolute;
+  right: 0; top: calc(100% + 8px);
+  min-width: 208px;
+  background: #fff;
+  border: 1px solid #f3f4f6;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px -8px rgba(16, 24, 40, .18);
+  padding: 4px 0;
+  z-index: 60;
+}
+.pss-pop[hidden] { display: none; }
+.pss-pop__label {
+  padding: 8px 16px;
+  font-size: 11px; font-weight: 600; color: #9ca3af;
+  text-transform: uppercase; letter-spacing: .06em;
+}
+.pss-pop__head { padding: 8px 16px; border-bottom: 1px solid #f3f4f6; }
+.pss-pop__head b { display: block; font-size: 12px; font-weight: 600; color: #1f2937; }
+.pss-pop__head span { display: block; font-size: 12px; color: #6b7280; }
+.pss-pop__head b, .pss-pop__head span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pss-pop a, .pss-pop button {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%;
+  padding: 8px 16px;
+  font-size: 14px; color: #374151;
+  text-decoration: none; text-align: left;
+  background: none; border: 0; cursor: pointer;
+  font-family: inherit;
+}
+.pss-pop a:hover, .pss-pop button:hover { background: #f9fafb; }
+.pss-pop a.is-current { color: var(--pss-accent); font-weight: 500; justify-content: space-between; }
+.pss-pop .pss-pop__sep { height: 1px; background: #f3f4f6; margin: 4px 0; }
+.pss-pop .pss-signout { color: #dc2626; }
+.pss-pop .pss-signout:hover { background: #fef2f2; }
+.pss-pop svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+/* ---------- mobile ---------- */
+.pss-burger {
+  display: flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px;
+  border: 0; background: none; cursor: pointer; color: #4b5563;
+  margin-left: auto;
+}
+@media (min-width: 768px) { .pss-burger { display: none; } }
+.pss-burger svg { width: 22px; height: 22px; }
+
+.pss-mobile {
+  border-top: 1px solid #f3f4f6;
+  background: #fff;
+  padding: 8px 16px 14px;
+}
+.pss-mobile[hidden] { display: none; }
+@media (min-width: 768px) { .pss-mobile { display: none !important; } }
+.pss-mobile a, .pss-mobile button {
+  display: block; width: 100%;
+  padding: 10px 0;
+  font-size: 14px; color: #374151;
+  text-decoration: none; text-align: left;
+  background: none; border: 0; font-family: inherit; cursor: pointer;
+}
+.pss-mobile .pss-mobile__sep { border-top: 1px solid #f3f4f6; margin-top: 8px; padding-top: 8px; }
+.pss-mobile .pss-mobile__home { color: #9ca3af; font-size: 12px; }
+.pss-mobile .pss-signout { color: #dc2626; font-weight: 500; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pss-topbar *, .pss-topbar *::before, .pss-topbar *::after {
+    transition-duration: .01ms !important;
+  }
+}
+
+/* ==========================================================================
+   Dark mode — opt-in via a `.dark` ancestor (the class-based convention these
+   apps use). Deliberately NOT wired to prefers-color-scheme: an app with its
+   own theme toggle would otherwise get a dark bar while the user has chosen
+   light. Apps with no dark mode are unaffected.
+   ========================================================================== */
+.dark .pss-topbar {
+  background: #0f172a;
+  border-bottom-color: #1e293b;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .3);
+}
+.dark .pss-topbar .pss-home { color: #64748b; border-right-color: #1e293b; }
+.dark .pss-topbar .pss-nav a { color: #94a3b8; }
+.dark .pss-topbar .pss-nav a:hover,
+.dark .pss-topbar .pss-nav a[aria-current="page"],
+.dark .pss-topbar .pss-home:hover { color: #e2e8f0; }
+.dark .pss-topbar .pss-brand__name { color: #e2e8f0; }
+.dark .pss-topbar .pss-link { color: #cbd5e1; }
+.dark .pss-topbar .pss-switch { background: #0f172a; border-color: #1e293b; color: #e2e8f0; }
+.dark .pss-topbar .pss-switch:hover { background: #1e293b; border-color: #334155; }
+.dark .pss-topbar .pss-user:hover { background: #1e293b; }
+.dark .pss-topbar .pss-user__name { color: #cbd5e1; }
+.dark .pss-topbar .pss-pop { background: #0f172a; border-color: #1e293b; }
+.dark .pss-topbar .pss-pop a, .dark .pss-topbar .pss-pop button { color: #cbd5e1; }
+.dark .pss-topbar .pss-pop a:hover, .dark .pss-topbar .pss-pop button:hover { background: #1e293b; }
+.dark .pss-topbar .pss-pop__head { border-bottom-color: #1e293b; }
+.dark .pss-topbar .pss-pop__head b { color: #e2e8f0; }
+.dark .pss-topbar .pss-pop__sep { background: #1e293b; }
+.dark .pss-topbar .pss-signout { color: #f87171; }
+.dark .pss-topbar .pss-signout:hover { background: rgba(248, 113, 113, .12); }
+.dark .pss-topbar .pss-mobile { background: #0f172a; border-top-color: #1e293b; }
+.dark .pss-topbar .pss-mobile a, .dark .pss-topbar .pss-mobile button { color: #cbd5e1; }
+.dark .pss-topbar .pss-burger { color: #94a3b8; }

@@ -1,0 +1,104 @@
+<!-- ==========================================================================
+     Prabhas SaaS — shared app top bar : canonical markup
+     Copy this into an app and change ONLY the marked spots:
+       {{ACCENT}}    app brand colour, e.g. #7A1F2B
+       {{APP_NAME}}  e.g. Seedha Bill
+       {{APP_HOME}}  the app's own home URL
+       {{LOGO}}      the app's logo mark (inline <svg> or <img>)
+       nav links     the app's own sections/pages
+       CTA           the app's own primary action
+     Structure, class names and order stay as they are — that is what makes
+     the bar read as the same bar across apps.
+
+     Requires: pss-topbar.css, pss-topbar.js
+     Spec: docs/TOPBAR.md
+     ========================================================================== -->
+<header class="pss-topbar" style="--pss-accent:{{ACCENT}}">
+  <div class="pss-topbar__in">
+
+    <div class="pss-topbar__left">
+      <a class="pss-home" href="https://prabhassaas.in">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px">
+          <path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>
+        </svg>
+        <span>Prabhas SaaS</span>
+      </a>
+      <a class="pss-brand" href="{{APP_HOME}}">
+        <span class="pss-brand__mark">{{LOGO}}</span>
+        <span class="pss-brand__name">{{APP_NAME}}</span>
+      </a>
+    </div>
+
+    <nav class="pss-nav">
+      <!-- app's own links -->
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+    </nav>
+
+    <div class="pss-actions">
+      <!-- signed out -->
+      <a class="pss-link" data-pss-when="out" href="{{SIGNIN_URL}}">Sign in</a>
+      <a class="pss-cta" data-pss-when="out" href="{{CTA_URL}}">{{CTA_LABEL}}</a>
+
+      <!-- signed in -->
+      <div class="pss-menu" data-pss-when="in" hidden>
+        <button class="pss-switch" type="button" aria-expanded="false" aria-controls="pssApps">
+          <span class="pss-switch__mark">{{LOGO}}</span>
+          <span>{{APP_NAME}}</span>
+          <svg class="pss-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="pss-pop" id="pssApps" data-pss-pop hidden>
+          <div class="pss-pop__label">Your apps</div>
+          <a class="is-current" href="{{APP_HOME}}">
+            <span>{{APP_NAME}}</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          </a>
+          <a href="https://seedhabill.prabhassaas.in/">Seedha Bill</a>
+          <a href="https://lekhya.prabhassaas.in/">Lekhya AI</a>
+          <a href="https://dastavej.prabhassaas.in/">Dastavej</a>
+          <a href="https://shilp3d.prabhassaas.in/">Shilp3D</a>
+          <div class="pss-pop__sep"></div>
+          <a href="https://accounts.prabhassaas.in/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            <span>Add app</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="pss-menu" data-pss-when="in" hidden>
+        <button class="pss-user" type="button" aria-expanded="false" aria-controls="pssUser">
+          <span class="pss-user__avatar" data-pss-avatar>··</span>
+          <span class="pss-user__name" data-pss-firstname></span>
+          <svg class="pss-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="pss-pop" id="pssUser" data-pss-pop hidden>
+          <div class="pss-pop__head">
+            <b data-pss-name></b>
+            <span data-pss-email></span>
+          </div>
+          <a href="https://accounts.prabhassaas.in/">Account</a>
+          <div class="pss-pop__sep"></div>
+          <button class="pss-signout" type="button" data-pss-signout>Sign out</button>
+        </div>
+      </div>
+
+      <a class="pss-cta" data-pss-when="in" hidden href="{{CTA_URL}}">{{CTA_LABEL}}</a>
+    </div>
+
+    <button class="pss-burger" type="button" data-pss-burger aria-expanded="false" aria-label="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+
+  </div>
+
+  <div class="pss-mobile" data-pss-mobile hidden>
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+    <div class="pss-mobile__sep">
+      <a class="pss-mobile__home" href="https://prabhassaas.in">← Prabhas SaaS</a>
+      <a data-pss-when="out" href="{{SIGNIN_URL}}">Sign in</a>
+      <a href="{{CTA_URL}}">{{CTA_LABEL}}</a>
+      <button class="pss-signout" type="button" data-pss-when="in" hidden data-pss-signout>Sign out</button>
+    </div>
+  </div>
+</header>
